@@ -71,6 +71,15 @@ d3.gantt = function () {
     initTimeDomain();
     initAxis();
 
+  /* Initialize tooltip */
+  var tip = d3
+    .tip()
+    .offset([-5, 0])
+    .html(function (d) {
+      if (d.fullText)
+        return "<div class='nodesToolTip'>" + d.fullText + "</div>";
+    });
+
     var svg = d3.select("#experience")
       .append("svg")
       .attr("class", "chart")
@@ -85,6 +94,8 @@ d3.gantt = function () {
     svg.selectAll(".chart")
       .data(tasks, keyFunction).enter()
       .append("rect")
+      .on('mouseover', tip.show)
+      .on('mouseout', tip.hide)
       .attr("rx", 5)
       .attr("ry", 5)
       .attr("class", function (d) {
@@ -108,6 +119,7 @@ d3.gantt = function () {
       .attr("y", 20)
       .attr("fill", "white")
       .attr("text-anchor", "start")
+      .attr("font-family", "Anton")
       .text(function(d) { return d.taskName; });
 
     svg.append("g")
@@ -117,6 +129,12 @@ d3.gantt = function () {
       .call(xAxis);
 
     //      svg.append("g").attr("class", "y axis").transition().call(yAxis);
+
+
+    
+
+    /* Invoke the tip in the context of your visualization */
+    svg.call(tip)
 
     return gantt;
 
