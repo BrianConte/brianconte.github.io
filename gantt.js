@@ -72,9 +72,10 @@ d3.gantt = function () {
     initAxis();
 
   /* Initialize tooltip */
+  var div = d3.select("body").append("div").attr("class", "nodesToolTip");
   var tip = d3
     .tip()
-    .offset([-5, 0])
+    /*.offset([-5, 0])*/
     .html(function (d) {
       if (d.fullText)
         return "<div class='nodesToolTip'>" + d.fullText + "</div>";
@@ -91,11 +92,68 @@ d3.gantt = function () {
       .attr("height", height + margin.top + margin.bottom)
       .attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
 
-    svg.selectAll(".chart")
+      function getNodePos(el)
+      {
+          var body = d3.select('body').node();
+      
+          for (var lx = 0, ly = 0;
+               el != null && el != body;
+               lx += (el.offsetLeft || el.clientLeft), ly += (el.offsetTop || el.clientTop), el = (el.offsetParent || el.parentNode))
+              ;
+          return {x: lx, y: ly};
+      }
+      var root = d3.select("svg");
+      var scr = { x: window.scrollX, y: window.scrollY, w: window.innerWidth, h: window.innerHeight };
+      var body_sel = d3.select('body');
+      var body = { w: body_sel.node().offsetWidth, h: body_sel.node().offsetHeight };
+      var doc = { w: document.width, h: document.height };
+      var svgpos = getNodePos(root.node());
+      var dist = { x: 10, y: 10 };
+    bar = svg.selectAll(".chart")
       .data(tasks, keyFunction).enter()
-      .append("rect")
-      .on('mouseover', tip.show)
-      .on('mouseout', tip.hide)
+      .append("g")
+      .attr("class","g_bar")
+      //.on('mouseover', tip.show)
+      //.on('mouseout', tip.hide)
+      .on("mouseout", function(d){
+        div.style("display", "none");
+      })
+      .on("mousemove", function(d){
+        if (d.fullText){
+          div.style("right", "");
+          div.style("left", "");
+          div.style("bottom", "");
+          div.style("top", "");
+          var m = d3.mouse(root.node());
+          scr.x = window.scrollX;
+          scr.y = window.scrollY;
+          m[0] += svgpos.x;
+          m[1] += svgpos.y;
+          if (m[0] > scr.x + scr.w / 2) {
+              div.style("right", (body.w - m[0] + dist.x) + "px");
+          }
+          else {
+              div.style("left", (m[0] + dist.x) + "px");
+          }
+
+          if (m[1] > scr.y + scr.h / 2) {
+              div.style("bottom", (body.h - m[1] + dist.y) + "px");
+          }
+          else {
+              div.style("top", (m[1] + dist.y) + "px");
+          }
+          //div.style("left", d3.event.pageX+10+"px");
+          //div.style("top", d3.event.pageY-25+"px");
+          div.style("display", "inline-block");
+          div.html(d.fullText);
+        }
+        /*var xPosition = d3.mouse(this)[0] - 15;
+        var yPosition = d3.mouse(this)[1] - 25;
+        console.log(d3.event.pageY-25, d3.event.pageX+10)
+        tip.offset([d3.event.pageX+10,d3.event.pageY-25]);*/
+    });
+      
+    bar.append("rect")
       .attr("rx", 5)
       .attr("ry", 5)
       .attr("class", function (d) {
@@ -110,9 +168,7 @@ d3.gantt = function () {
         return (x(d.endDate) - x(d.startDate));
       });
 
-    svg.selectAll(".chart")
-      .data(tasks).enter()
-      .append("text")
+    bar.append("text")
       .attr("class", "barText")
       .attr("transform", rectTransform)
       .attr("x", 5)

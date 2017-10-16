@@ -15,47 +15,56 @@
       "group": 1,
       "fx":360,
       "fy":200,
-      "fixed":"true"
+      "fixed":"true",
+      "fullText": "Throughout my career, I have remained technical. I started as a software engineer and still code to this day. Most of my experience is with Microsoft technologies but I have experience with open source technologies as well. I enjoy the challenge and potential of technology."
     },
     {
       "id": "Business Planning",
       "r": 40,
-      "group": 1
+      "group": 1,
+      "fullText": "Throughout my career, I have remained technical. I started as a software engineer and still code to this day. Most of my experience is with Microsoft technologies but I have experience with open source technologies as well. I enjoy the challenge and potential of technology."
     },
     {
       "id": "Recruiting",
       "r": 40,
-      "group": 1
+      "group": 1,
+      "fullText": "Throughout my career, I have remained technical. I started as a software engineer and still code to this day. Most of my experience is with Microsoft technologies but I have experience with open source technologies as well. I enjoy the challenge and potential of technology."
     },
     {
       "id": "Project Management",
       "r": 40,
-      "group": 1
+      "group": 1,
+      "fullText": "Throughout my career, I have remained technical. I started as a software engineer and still code to this day. Most of my experience is with Microsoft technologies but I have experience with open source technologies as well. I enjoy the challenge and potential of technology."
     },
     {
       "id": "Product Design",
       "r": 40,
-      "group": 1
+      "group": 1,
+      "fullText": "Throughout my career, I have remained technical. I started as a software engineer and still code to this day. Most of my experience is with Microsoft technologies but I have experience with open source technologies as well. I enjoy the challenge and potential of technology."
     },
     {
       "id": "Architecture",
       "r": 40,
-      "group": 2
+      "group": 2,
+      "fullText": "Throughout my career, I have remained technical. I started as a software engineer and still code to this day. Most of my experience is with Microsoft technologies but I have experience with open source technologies as well. I enjoy the challenge and potential of technology."
     },
     {
       "id": "Data Science",
       "r": 40,
-      "group": 2
+      "group": 2,
+      "fullText": "Throughout my career, I have remained technical. I started as a software engineer and still code to this day. Most of my experience is with Microsoft technologies but I have experience with open source technologies as well. I enjoy the challenge and potential of technology."
     },
     {
       "id": "Machine Learning",
       "r": 40,
-      "group": 2
+      "group": 2,
+      "fullText": "Throughout my career, I have remained technical. I started as a software engineer and still code to this day. Most of my experience is with Microsoft technologies but I have experience with open source technologies as well. I enjoy the challenge and potential of technology."
     },
     {
       "id": "Algorithms",
       "r": 40,
-      "group": 2
+      "group": 2,
+      "fullText": "Throughout my career, I have remained technical. I started as a software engineer and still code to this day. Most of my experience is with Microsoft technologies but I have experience with open source technologies as well. I enjoy the challenge and potential of technology."
     }
      ],
   "links": [
