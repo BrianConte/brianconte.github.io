@@ -100,6 +100,7 @@
       });
 
     /* Initialize tooltip */
+    var div = d3.select("body").append("div").attr("class", "nodesToolTip");
     var tip = d3
       .tip()
       .html(function (d) {
@@ -110,13 +111,65 @@
     /* Invoke the tip in the context of your visualization */
     svgSkills.call(tip)
 
-    var node = svgSkills.append("g")
+    function getNodePos(el)
+      {
+          var body = d3.select('body').node();
+      
+          for (var lx = 0, ly = 0;
+               el != null && el != body;
+               lx += (el.offsetLeft || el.clientLeft), ly += (el.offsetTop || el.clientTop), el = (el.offsetParent || el.parentNode))
+              ;
+          return {x: lx, y: ly};
+      }
+      var root = d3.select("svg");
+      var scr = { x: window.scrollX, y: window.scrollY, w: window.innerWidth, h: window.innerHeight };
+      var body_sel = d3.select('body');
+      var body = { w: body_sel.node().offsetWidth, h: body_sel.node().offsetHeight };
+      var doc = { w: document.width, h: document.height };
+      var svgpos = getNodePos(root.node());
+      var dist = { x: 10, y: 10 };
+
+    var node_g = svgSkills.append("g")
       .attr("class", "nodes")
       .selectAll("circle")
       .data(graph.nodes)
-      .enter().append("circle")
-      .on('mouseover', tip.show)
-      .on('mouseout', tip.hide)
+      .enter().append("g")
+      .attr("class", "cls_node_g")
+      .on("mouseout", function(d){
+        div.style("display", "none");
+      })
+      .on("mousemove", function(d){
+        if (d.fullText){
+          div.style("right", "");
+          div.style("left", "");
+          div.style("bottom", "");
+          div.style("top", "");
+          var m = d3.mouse(root.node());
+          scr.x = window.scrollX;
+          scr.y = window.scrollY;
+          m[0] += svgpos.x;
+          m[1] += svgpos.y;
+          if (m[0] > scr.x + scr.w / 2) {
+              div.style("right", (body.w - m[0] + dist.x) + "px");
+          }
+          else {
+              div.style("left", (m[0] + dist.x) + "px");
+          }
+
+          if (m[1] > scr.y + scr.h / 2) {
+              div.style("bottom", (body.h - m[1] + dist.y) + "px");
+          }
+          else {
+              div.style("top", (m[1] + dist.y) + "px");
+          }
+          div.style("display", "inline-block");
+          div.html(d.fullText);
+        }
+    });
+      
+    var node = node_g.append("circle")
+      /*.on('mouseover', tip.show)
+      .on('mouseout', tip.hide)*/
       .attr("r", function (d) {
         return d.r;
       })
@@ -128,9 +181,12 @@
         .on("drag", dragged)
         .on("end", dragended));
 
-    var text = svgSkills.selectAll("text")
+    /*var text = svgSkills.selectAll("text")
       .data(graph.nodes)
       .enter()
+      .append("g");*/
+
+    var text = node_g
       .append("g");
 
     text
