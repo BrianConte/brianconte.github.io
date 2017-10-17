@@ -20,6 +20,7 @@ d3.gantt = function () {
   var timeDomainMode = FIT_TIME_DOMAIN_MODE;// fixed or fit
   var taskTypes = [];
   var taskStatus = [];
+  var tasks = [];
   var height = 350 - margin.top - margin.bottom - 5;// document.body.clientHeight - margin.top - margin.bottom-5;
   var width = 600 - margin.right - margin.left - 5;//document.body.clientWidth - margin.right - margin.left-5;
 
@@ -66,23 +67,16 @@ d3.gantt = function () {
     yAxis = d3.axisLeft().scale(y).tickSize(0);
   };
 
-  function gantt(tasks) {
-
+  function gantt(_tasks, svgElement) {
+    tasks = _tasks.map(function (item) {
+      item.startDate = new Date(item.startDate);
+      item.endDate = new Date(item.endDate);
+      return item;
+    });
     initTimeDomain();
     initAxis();
 
-  /* Initialize tooltip */
-  var div = d3.select("body").append("div").attr("class", "nodesToolTip");
-  var tip = d3
-    .tip()
-    /*.offset([-5, 0])*/
-    .html(function (d) {
-      if (d.fullText)
-        return "<div class='nodesToolTip'>" + d.fullText + "</div>";
-    });
-
-    var svg = d3.select("#experience")
-      .append("svg")
+    var svg = d3.select(svgElement)
       .attr("class", "chart")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -92,67 +86,19 @@ d3.gantt = function () {
       .attr("height", height + margin.top + margin.bottom)
       .attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
 
-      function getNodePos(el)
-      {
-          var body = d3.select('body').node();
-      
-          for (var lx = 0, ly = 0;
-               el != null && el != body;
-               lx += (el.offsetLeft || el.clientLeft), ly += (el.offsetTop || el.clientTop), el = (el.offsetParent || el.parentNode))
-              ;
-          return {x: lx, y: ly};
-      }
-      var root = d3.select("svg");
-      var scr = { x: window.scrollX, y: window.scrollY, w: window.innerWidth, h: window.innerHeight };
-      var body_sel = d3.select('body');
-      var body = { w: body_sel.node().offsetWidth, h: body_sel.node().offsetHeight };
-      var doc = { w: document.width, h: document.height };
-      var svgpos = getNodePos(root.node());
-      var dist = { x: 10, y: 10 };
     bar = svg.selectAll(".chart")
       .data(tasks, keyFunction).enter()
       .append("g")
-      .attr("class","g_bar")
-      //.on('mouseover', tip.show)
-      //.on('mouseout', tip.hide)
-      .on("mouseout", function(d){
-        div.style("display", "none");
+      .attr("class", "g_bar")
+      .on("mouseout", function (d) {
+        customTooltip.hide();
       })
-      .on("mousemove", function(d){
-        if (d.fullText){
-          div.style("right", "");
-          div.style("left", "");
-          div.style("bottom", "");
-          div.style("top", "");
-          var m = d3.mouse(root.node());
-          scr.x = window.scrollX;
-          scr.y = window.scrollY;
-          m[0] += svgpos.x;
-          m[1] += svgpos.y;
-          if (m[0] > scr.x + scr.w / 2) {
-              div.style("right", (body.w - m[0] + dist.x) + "px");
-          }
-          else {
-              div.style("left", (m[0] + dist.x) + "px");
-          }
-
-          if (m[1] > scr.y + scr.h / 2) {
-              div.style("bottom", (body.h - m[1] + dist.y) + "px");
-          }
-          else {
-              div.style("top", (m[1] + dist.y) + "px");
-          }
-          //div.style("left", d3.event.pageX+10+"px");
-          //div.style("top", d3.event.pageY-25+"px");
-          div.style("display", "inline-block");
-          div.html(d.fullText);
+      .on("mousemove", function (d) {
+        if (d.fullText) {
+          customTooltip.show(d.fullText);
         }
-        /*var xPosition = d3.mouse(this)[0] - 15;
-        var yPosition = d3.mouse(this)[1] - 25;
-        console.log(d3.event.pageY-25, d3.event.pageX+10)
-        tip.offset([d3.event.pageX+10,d3.event.pageY-25]);*/
-    });
-      
+      });
+
     bar.append("rect")
       .attr("rx", 5)
       .attr("ry", 5)
@@ -176,7 +122,7 @@ d3.gantt = function () {
       .attr("fill", "white")
       .attr("text-anchor", "start")
       .attr("font-family", "Anton")
-      .text(function(d) { return d.taskName; });
+      .text(function (d) { return d.taskName; });
 
     svg.append("g")
       .attr("class", "x axis")
@@ -184,16 +130,7 @@ d3.gantt = function () {
       .transition()
       .call(xAxis);
 
-    //      svg.append("g").attr("class", "y axis").transition().call(yAxis);
-
-
-    
-
-    /* Invoke the tip in the context of your visualization */
-    svg.call(tip)
-
     return gantt;
-
   };
 
   gantt.redraw = function (tasks) {
@@ -301,3 +238,12 @@ d3.gantt = function () {
 
   return gantt;
 };
+
+/*
+d3.json("experience.json", function (error, experience) {
+  if (error) throw error;
+
+  var gantt = d3.gantt().taskTypes(experience.taskNames).taskStatus(experience.taskStatus).tickFormat(experience.format);
+  gantt(experience.tasks, "#experience");
+});
+*/
